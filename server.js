@@ -5,7 +5,7 @@ const swaggerJsDoc=require('swagger-jsdoc');
 const swaggerUi=require('swagger-ui-express');
 const app = express();
 app.use(express.json());
-
+//path
 const pathConfig=require('./path.js');
 global.__base=__dirname+'/';
 global.__path_app=__base+pathConfig.folder_app+'/';
