@@ -4,6 +4,7 @@ const databaseConfig=require(__path_config+'database');
 var schema=new mongoose.Schema({
     id:String,
     username:{ type: String, unique: true },
+    email:{type: String,unique:true},
     name:String,
     password:String
 });

@@ -5,11 +5,11 @@ module.exports={
     listUsers:(param,option)=>{
         if(option.task=='all'){
             //tra ve du lieu id username name status
-            return MainModel.find({}).select('id username name');
+            return MainModel.find({}).select('id email username name');
         }
         if(option.task=='one'){
             //tra ve du lieu cua 1 user cu the
-            return MainModel.find({id:param.id}).select('id username name');
+            return MainModel.find({id:param.id}).select('id email username name');
         }
     },
     //luu lai tren data base
