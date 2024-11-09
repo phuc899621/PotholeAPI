@@ -139,19 +139,19 @@ router.post('/register', async (req,res,next)=>{
     param.email=req.body.email;
     const passwordNonHash=req.body.password;
     const user=await MainModel.listUsers({'email':param.email},{'task':'register'});
-    if(user.length!=0||user){
+    if(user){
       if(param.username==user.username){
         res.status(400).json({
           success:false,
           message:"Already have this username",
-          data:[]
+          data:{}
         });
       }
       else{
         res.status(400).json({
           success:false,
           message:"Already have this email",
-          data:[]
+          data:{}
         });
       }
     }else{
@@ -169,7 +169,7 @@ router.post('/register', async (req,res,next)=>{
     res.status(400).json({
       success:false,
       message:"Error",
-      data:[]
+      data:{}
     })
   }
 })
