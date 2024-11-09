@@ -90,7 +90,7 @@ router.post('/login',async (req,res,next)=>{
     const passwordNonHash=req.body.password;
    
     const data=await MainModel.listUsers({'username':username},{'task':'login'});
-    if(!data){
+    if(!data||data.length==0){
       return res.status(400).json({
         success:false,
         message:'No user found',
@@ -138,7 +138,7 @@ router.post('/register', async (req,res,next)=>{
     param.email=req.body.email;
     const passwordNonHash=req.body.password;
     const user=await MainModel.listUsers({'email':param.email},{'task':'register'});
-    if(user){
+    if(user.length!=0||user){
       if(param.username==user.username){
         res.status(400).json({
           success:false,
