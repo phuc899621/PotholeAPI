@@ -1,6 +1,8 @@
 // routes/auth.js
 var express = require('express');
-var router = express.Router(); // Đảm bảo router đã được tạo đúng cách
+var router = express.Router(); 
+const bcrypt = require('bcryptjs');
+const { password, username } = require('../config/database');
 
 const controllerName='users';
 const MainModel=require(__path_models+controllerName);
@@ -26,7 +28,11 @@ router.get('/',async (req,res,next)=>{
       data:data
     })
   }catch{
-    res.status(400).json({success:false})
+    res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+    })
   }
 })
 
@@ -34,7 +40,7 @@ router.get('/',async (req,res,next)=>{
 //lay 1 user co id
 /**
  * @swagger
- * /:id:
+ * /find/:id:
  *  get: 
  *        summary: this api is used to get one user with id
  *        description: this api is used to get one user with id
@@ -44,25 +50,76 @@ router.get('/',async (req,res,next)=>{
  *          400:
  *              description: Failed
  */
-router.get('/:id',async (req,res,next)=>{
+router.get('/find/:id',async (req,res,next)=>{
   try{
     //dat dieu kien task=one thi lay 1
-    const data=await MainModel.listUsers({'id':req.params .id},{'task':'one'})
+    const data=await MainModel.listUsers({'id':req.params.id},{'task':'one'});
     res.status(201).json({
     success:true,
     data:data
     })
   }catch{
-    res.status(400).json({success:false})
+    res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+    })
   }
 })
 
+
+
+
+//dang nhap
+/**
+ * @swagger
+ * /login:
+ *  post: 
+ *        summary: this api is used to login
+ *        description: this api is used to login
+ *        responses:
+ *          201: 
+ *              description: login success
+ *          400:
+ *              description: Failed
+ */
+router.post('/login',async (req,res,next)=>{
+  try{
+    //dat dieu kien task=one thi lay 1
+    const username=req.body.username;
+    const passwordNonHash=req.body.password;
+   
+    const data=await MainModel.listUsers({'username':username},{'task':'login'});
+    if(!data){
+      return res.status(400).json({
+        success:false,
+        message:'No user found',
+        data:[]
+      })
+    }
+    const storedPassword=data.password;
+    const isMatch=await bcrypt.compare(passwordNonHash,storedPassword); 
+    if(isMatch){
+      return res.status(201).json({
+          success:true,
+          message:'',
+          data:data
+      });
+    }  
+    if(!isMatch) res.status(400).json({
+          success:false,
+          message:'Wrong Password',
+          data:data
+    }) 
+  }catch{
+    res.status(400).json({success:false})
+  }})
 
 //dung async de cho doi thuc hien
 //them vao 1 item
 /**
  * @swagger
- * /add:
+ * /register:
  *  post: 
  *        summary: this api is used to add one user with username, name, password
  *        description: this api is used to add one user with username, name, password
@@ -72,24 +129,47 @@ router.get('/:id',async (req,res,next)=>{
  *          400:
  *              description: Failed
  */
-router.post('/add', async (req,res,next)=>{
+router.post('/register', async (req,res,next)=>{
   try{
     let param=[];
     param.id=makeId(8);
     param.username=req.body.username;
     param.name=req.body.name;
-    param.password=req.body.password
-
-    //can tao phuong thuc create o models/users
-    const data=await MainModel.create(param);
-
-    //neu luu thanh cong thi in ra thong bao
-    res.status(201).json({
-      success:true,
-      data:data
+    param.email=req.body.email;
+    const passwordNonHash=req.body.password;
+    const user=await MainModel.listUsers({'email':param.email},{'task':'register'});
+    if(user){
+      if(param.username==user.username){
+        res.status(400).json({
+          success:false,
+          message:"Already have this username",
+          data:[]
+        });
+      }
+      else{
+        res.status(400).json({
+          success:false,
+          message:"Already have this email",
+          data:[]
+        });
+      }
+    }else{
+      param.password=await bcrypt.hash(passwordNonHash,10);
+      //can tao phuong thuc create o models/users
+      const data=await MainModel.create(param);
+      //neu luu thanh cong thi in ra thong bao
+      res.status(201).json({
+        success:true,
+        message:"",
+        data:data
     });
+    }
   }catch{
-    res.status(400).json({success:false})
+    res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+    })
   }
 })
 
@@ -117,7 +197,11 @@ router.put('/edit/:id',async (req,res,next)=>{
       data:data
   })
   }catch{
-    res.status(400).json({success:false})
+    res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+    })
   } 
 })
 /**
@@ -140,7 +224,11 @@ router.delete('/delete/:id',async (req,res,next)=>{
       data:data
   })
   }catch{
-    res.status(400).json({success:false})
+    res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+    })
   } 
 })
 module.exports = router; // Đảm bảo export router đúng cách

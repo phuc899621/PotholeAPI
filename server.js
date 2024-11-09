@@ -30,7 +30,7 @@ const options={
             version:'1.0.0'
         },
         servers:[{
-                url:`http://${systemConfig.server}:${PORT}/api/user/auth`
+                url:`http://lcoalhost:${PORT}/api/user/auth`
             }
         ]
     },
