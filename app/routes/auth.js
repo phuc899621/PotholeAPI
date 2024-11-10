@@ -104,13 +104,13 @@ router.post('/login',async (req,res,next)=>{
       return res.status(201).json({
           success:true,
           message:'',
-          data:data
+          data:Array.isArray(data)? data: [data]
       });
     }  
     res.status(400).json({
           success:false,
           message:'Wrong Password',
-          data:Array.isArray(data)? data: [data]
+          data:[]
     }) 
   }catch{
     res.status(400).json({success:false})
