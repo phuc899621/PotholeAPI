@@ -3,9 +3,17 @@ var express = require('express');
 var router = express.Router(); 
 const bcrypt = require('bcryptjs');
 const { password, username } = require('../config/database');
-
+const {mail_pasword,mail}=require('../config/system');
+const nodemailer = require('nodemailer');
 const controllerName='users';
 const MainModel=require(__path_models+controllerName);
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: mail, 
+      pass: mail_pasword          
+  }
+});
 
 /**
  * @swagger
@@ -131,13 +139,10 @@ router.post('/login',async (req,res,next)=>{
  *              description: Failed
  */
 router.post('/register', async (req,res,next)=>{
-  //try{
+  
     let param=[];
-    param.id=makeId(8);
     param.username=req.body.username;
-    param.name=req.body.name;
     param.email=req.body.email;
-    const passwordNonHash=req.body.password;
     const email=await MainModel.listUsers({'email':param.email},{'task':'registerEmail'});
     const username=await MainModel.listUsers({'username':param.username},{'task':'registerUsername'});
     if(username){
@@ -153,28 +158,74 @@ router.post('/register', async (req,res,next)=>{
           message:"Already have this email",
           data:[]
         });
-      };
-      param.password=await bcrypt.hash(passwordNonHash,10);
-      //can tao phuong thuc create o models/users
-      const data=await MainModel.create(param);
-      //neu luu thanh cong thi in ra thong bao
-      res.status(201).json({
-        success:true,
-        message:"",
-        data:Array.isArray(data)? data: [data]
-    });
+    };
+    return res.status(201).json({ 
+      success:true,
+      message:"", 
+      data:[] });
+    })
+/**
+ * @swagger
+ * /register/email:
+ *  put: 
+ *        summary: this api is used to update user
+ *        description: this api is used to update user
+ *        responses:
+ *          201: 
+ *              description: To update user
+ *          400:
+ *              description: Failed
+ */
+router.post('/register/email/code', async (req,res,next)=>{
+  const verificationCode = Math.floor(1000 + Math.random() * 9000); // Mã 4 chữ số
+  const clientEmail=req.body.email;
+    const mailOptions = {
+        from: mail,
+        to:  clientEmail,
+        subject: 'Email Verification Code For Pothole APP',
+        text: `Your verification code is: ${verificationCode}`
+    };
+    try {
+        await transporter.sendMail(mailOptions);
+        return res.status(201).json({ 
+          success:true,
+          message:verificationCode, 
+          data:[] });
+    } catch (error) {
+        return res.status(500).json({ 
+          success:false,
+          message: 'Error sending email', 
+          data:[] });
     }
-  // }catch{
-  //   res.status(400).json({
-  //     success:false,
-  //     message:"Error",
-  //     data:{}
-  //   })
-  // }
-)
+    return res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+      })
 
+})
 
-
+router.post('/register/add', async (req,res,next)=>{
+  let param=[];
+  param.id=makeId(8);
+  param.username=req.body.username;
+  param.name=req.body.name;
+  param.email=req.body.email;
+  param.password=await bcrypt.hash(req.body.password,10);
+  const data=await MainModel.create(param);
+  if(data==null){
+    return res.status(400).json({
+      success:false,
+      message:"Error",
+      data:[]
+      });
+  }
+  return res.status(201).json({
+    success:true,
+    message:'',
+    data:[data]
+    });
+})
 
 /**
  * @swagger
