@@ -25,7 +25,7 @@ router.get('/',async (req,res,next)=>{
     const data=await MainModel.listUsers({},{'task':'all'})
     res.status(201).json({
       success:true,
-      data:data
+      data:Array.isArray(data)? data: [data]
     })
   }catch{
     res.status(400).json({
@@ -56,7 +56,7 @@ router.get('/find/:id',async (req,res,next)=>{
     const data=await MainModel.listUsers({'id':req.params.id},{'task':'one'});
     res.status(201).json({
     success:true,
-    data:data
+    data:Array.isArray(data)? data: [data]
     })
   }catch{
     res.status(400).json({
@@ -110,7 +110,7 @@ router.post('/login',async (req,res,next)=>{
     res.status(400).json({
           success:false,
           message:'Wrong Password',
-          data:data
+          data:Array.isArray(data)? data: [data]
     }) 
   }catch{
     res.status(400).json({success:false})
@@ -131,30 +131,29 @@ router.post('/login',async (req,res,next)=>{
  *              description: Failed
  */
 router.post('/register', async (req,res,next)=>{
-  try{
+  //try{
     let param=[];
     param.id=makeId(8);
     param.username=req.body.username;
     param.name=req.body.name;
     param.email=req.body.email;
     const passwordNonHash=req.body.password;
-    const user=await MainModel.listUsers({'email':param.email},{'task':'register'});
-    if(user){
-      if(param.username==user.username){
-        res.status(400).json({
+    const email=await MainModel.listUsers({'email':param.email},{'task':'registerEmail'});
+    const username=await MainModel.listUsers({'username':param.username},{'task':'registerUsername'});
+    if(username){
+      return res.status(400).json({
           success:false,
           message:"Already have this username",
-          data:{}
+          data:[]
         });
-      }
-      else{
-        res.status(400).json({
+    };
+    if(email){
+        return res.status(400).json({
           success:false,
           message:"Already have this email",
-          data:{}
+          data:[]
         });
-      }
-    }else{
+      };
       param.password=await bcrypt.hash(passwordNonHash,10);
       //can tao phuong thuc create o models/users
       const data=await MainModel.create(param);
@@ -162,17 +161,17 @@ router.post('/register', async (req,res,next)=>{
       res.status(201).json({
         success:true,
         message:"",
-        data:data
+        data:Array.isArray(data)? data: [data]
     });
     }
-  }catch{
-    res.status(400).json({
-      success:false,
-      message:"Error",
-      data:{}
-    })
-  }
-})
+  // }catch{
+  //   res.status(400).json({
+  //     success:false,
+  //     message:"Error",
+  //     data:{}
+  //   })
+  // }
+)
 
 
 
@@ -195,7 +194,8 @@ router.put('/edit/:id',async (req,res,next)=>{
     const data=await MainModel.editUser({'id':req.params.id,'body':body},{'task':'edit'})
     res.status(201).json({
       success:true,
-      data:data
+      message:"",
+      data:Array.isArray(data)? data: [data]
   })
   }catch{
     res.status(400).json({
@@ -222,7 +222,8 @@ router.delete('/delete/:id',async (req,res,next)=>{
     const data=await MainModel.deleteUser({'id':req.params.id},{'task':'one'})
     res.status(201).json({
       success:true,
-      data:data
+      message:"",
+      data:Array.isArray(data)? data: [data]
   })
   }catch{
     res.status(400).json({
