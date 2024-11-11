@@ -17,13 +17,13 @@ const transporter = nodemailer.createTransport({
 
 /**
  * @swagger
- * /:
+ * /auth/:
  *  get: 
- *        summary: this api is used to get all users on database
- *        description: this api is used to get all users on database
+ *        summary: Get all user
+ *        description: get all user
  *        responses:
  *          201: 
- *              description: To get all users
+ *              description: Get all user info
  *          400:
  *              description: Failed
  */
@@ -48,13 +48,13 @@ router.get('/',async (req,res,next)=>{
 //lay 1 user co id
 /**
  * @swagger
- * /find/:id:
+ * /auth/find/:id:
  *  get: 
- *        summary: this api is used to get one user with id
+ *        summary: find a user with id
  *        description: this api is used to get one user with id
  *        responses:
  *          201: 
- *              description: To get one user
+ *              description: get a user with id
  *          400:
  *              description: Failed
  */
@@ -76,15 +76,13 @@ router.get('/find/:id',async (req,res,next)=>{
 })
 
 
-
-
 //dang nhap
 /**
  * @swagger
- * /login:
+ * /auth/login:
  *  post: 
- *        summary: this api is used to login
- *        description: this api is used to login
+ *        summary: Login with username and password
+ *        description: Login with username and password
  *        responses:
  *          201: 
  *              description: login success
@@ -121,22 +119,26 @@ router.post('/login',async (req,res,next)=>{
           data:[]
     }) 
   }catch{
-    res.status(400).json({success:false})
-  }})
+    res.status(400).json({
+      success:false,
+      message:'Error',
+      data:[]
+    })
+  }
+})
 
-//dung async de cho doi thuc hien
-//them vao 1 item
+//kiem tra xem email va username co ton tai ko
 /**
  * @swagger
- * /register:
+ * /auth/register:
  *  post: 
- *        summary: this api is used to add one user with username, name, password
- *        description: this api is used to add one user with username, name, password
+ *        summary: Check if username or email already exist
+ *        description: Check if username or email already exist
  *        responses:
  *          201: 
- *              description: To add user
+ *              description: Server can send verification email code
  *          400:
- *              description: Failed
+ *              description: username or email already exist
  */
 router.post('/register', async (req,res,next)=>{
   
@@ -166,13 +168,13 @@ router.post('/register', async (req,res,next)=>{
     })
 /**
  * @swagger
- * /register/email:
- *  put: 
- *        summary: this api is used to update user
- *        description: this api is used to update user
+ * /auth/register/email/code:
+ *  post: 
+ *        summary: Send verification code for register
+ *        description: Send verification code for register
  *        responses:
  *          201: 
- *              description: To update user
+ *              description: Send successfully
  *          400:
  *              description: Failed
  */
@@ -197,14 +199,21 @@ router.post('/register/email/code', async (req,res,next)=>{
           message: 'Error sending email', 
           data:[] });
     }
-    return res.status(400).json({
-      success:false,
-      message:"Error",
-      data:[]
-      })
 
 })
 
+/**
+ * @swagger
+ * /auth/register/add:
+ *  post: 
+ *        summary: Add new user to database
+ *        description: Add new user to database
+ *        responses:
+ *          201: 
+ *              description: add successfully
+ *          400:
+ *              description: Failed
+ */
 router.post('/register/add', async (req,res,next)=>{
   let param=[];
   param.id=makeId(8);
@@ -213,7 +222,7 @@ router.post('/register/add', async (req,res,next)=>{
   param.email=req.body.email;
   param.password=await bcrypt.hash(req.body.password,10);
   const data=await MainModel.create(param);
-  if(data==null){
+  if(!data){
     return res.status(400).json({
       success:false,
       message:"Error",
@@ -227,40 +236,12 @@ router.post('/register/add', async (req,res,next)=>{
     });
 })
 
-/**
- * @swagger
- * /edit/:id:
- *  put: 
- *        summary: this api is used to update user
- *        description: this api is used to update user
- *        responses:
- *          201: 
- *              description: To update user
- *          400:
- *              description: Failed
- */
-router.put('/edit/:id',async (req,res,next)=>{
-  try{
-    const body=req.body;
-    const data=await MainModel.editUser({'id':req.params.id,'body':body},{'task':'edit'})
-    res.status(201).json({
-      success:true,
-      message:"",
-      data:Array.isArray(data)? data: [data]
-  })
-  }catch{
-    res.status(400).json({
-      success:false,
-      message:"Error",
-      data:[]
-    })
-  } 
-})
+
 /**
  * @swagger
  * /delete/:id:
  *  delete: 
- *        summary: this api is used to delete user
+ *        summary: Delete user
  *        description: this api is used to delete user
  *        responses:
  *          201: 

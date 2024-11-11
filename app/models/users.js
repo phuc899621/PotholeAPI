@@ -22,6 +22,12 @@ module.exports={
         if(option.task=='registerUsername'){
             return MainModel.findOne({username: param.username }).select('id email name username email password');
         }
+        if(option.task=='resetPassword'){
+            return MainModel.findOne({email:param.email}).select("id email name username password");
+        }
+        if(option.task=='edit'){
+            return MainModel.findOne({email:param.email}).select('id name email username password');
+        }
         
     },
     //luu lai tren data base
@@ -36,8 +42,12 @@ module.exports={
     },
     editUser:(param,option)=>{
         if(option.task=='edit'){
-            return MainModel.updateOne({id:param.id},param.body)
+            return MainModel.updateOne({email:param.email},param.body);
         }
+        if(option.task=='password'){
+            return MainModel.updateOne({email:param.email},{ $set:{ password: param.password}});
+        }
+        
     },
     
 

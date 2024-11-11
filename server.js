@@ -30,14 +30,14 @@ const options={
             version:'1.0.0'
         },
         servers:[{
-                url:`http://lcoalhost:${PORT}/api/user/auth`
+                url:`http://${server}:${PORT}/api/user`
             }
         ]
     },
     apis:[__path_routers+"/*.js"]
 }
 const swaggerSpec=swaggerJsDoc(options);
-app.use('/api/user/auth/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec));
+app.use('/api/user/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec));
 
 
 var uri=`mongodb+srv://${databaseConfig.username}:${databaseConfig.password}@cluster0.qskjs.mongodb.net/${databaseConfig.database}`;
