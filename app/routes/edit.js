@@ -158,3 +158,4 @@ router.put('/info/email/:email',async (req,res,next)=>{
       })
   } 
 })
+module.exports = router;
