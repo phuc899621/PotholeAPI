@@ -30,7 +30,7 @@ const options={
             version:'1.0.0'
         },
         servers:[{
-                url:`http://${server}:${PORT}/api/user`
+                url:`http://${systemConfig.server}:${PORT}/api/user`
             }
         ]
     },
