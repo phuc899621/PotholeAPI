@@ -46,7 +46,8 @@ router.post('/register', async (req,res,next)=>{
           return res.status(500).json({ 
             success:false,
             message: 'Error sending email', 
-            data:[] });
+            data:[] 
+          });
       }
   
   })
