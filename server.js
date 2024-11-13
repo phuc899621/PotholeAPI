@@ -30,7 +30,7 @@ const options={
             version:'1.0.0'
         },
         servers:[{
-                url:`http://${systemConfig.server}:${PORT}`
+                url:`http://${systemConfig.server}:${PORT}/api`
             }
         ]
     },
@@ -47,13 +47,9 @@ mongoose.connect(uri)
     })
     .catch(err => console.log(err));
 
-//default 
-app.get('/',(req,res)=>{
-    res.send("welcome to pothole App API")
-})
 
 //Goi den route /
-app.use('/api/',require(__path_routers));
+app.use('/api',require(__path_routers));
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
