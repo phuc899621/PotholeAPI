@@ -1,85 +1,20 @@
 var express = require('express');
 var router = express.Router(); 
 const bcrypt = require('bcryptjs');
-const { password, username } = require('../config/database');
 const {mail_pasword,mail}=require('../config/system');
 const nodemailer = require('nodemailer');
-const controllerName='users';
-const MainModel=require(__path_models+controllerName);
+const MainModel=require(__path_models+'users');
+
+//Cau hinh transporter de gui mail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: mail, 
-      pass: mail_pasword          
+    user: mail, 
+    pass: mail_pasword
   }
 });
-//kiem tra xem email co trong csdl ko
-/**
- * @swagger
- * /edit/password/email:
- *  post: 
- *        summary: Check if email exists or not
- *        description: Check if email exists or not
- *        responses:
- *          201: 
- *              description: email exists
- *          400:
- *              description: email not found
- */
-router.post('/password/email',async (req,res,next)=>{
-    const emailClient=req.body.email;
-    const email=await MainModel.listUsers({'email':emailClient},{'task':'registerEmail'});
-    if(!email){
-        return res.status(400).json({
-            success:false,
-            message:'Email not found',
-            data:[]
-        })
-    }
-    return res.status(200).json({
-        success:true,
-        message:'',
-        data:[]
-    })
 
-})
-//gui code
-/**
- * @swagger
- * /edit/password/email/code:
- *  post: 
- *        summary: Send verification code for reset password
- *        description: Send verification code for reset password
- *        responses:
- *          201: 
- *              description: Sent successfully
- *          400:
- *              description: Failed
- */
-router.post('/password/email/code', async (req,res,next)=>{
-    const verificationCode = Math.floor(1000 + Math.random() * 9000); // Mã 4 chữ số
-    const clientEmail=req.body.email;
-      const mailOptions = {
-          from: mail,
-          to:  clientEmail,
-          subject: 'Code For Reseting Password',
-          text: `Your code is: ${verificationCode}`
-      };
-      try {
-          await transporter.sendMail(mailOptions);
-          return res.status(201).json({ 
-            success:true,
-            message:verificationCode, 
-            data:[] });
-      } catch (error) {
-          return res.status(500).json({ 
-            success:false,
-            message: 'Error sending email', 
-            data:[] });
-      }
-  })
-
-  //gui len email va password moi
+  //gui len email va password moi 
 /**
  * @swagger
  * /edit/password:
@@ -87,75 +22,181 @@ router.post('/password/email/code', async (req,res,next)=>{
  *        summary: Edit password
  *        description: Edit password
  *        responses:
- *          201: 
+ *          200: 
  *              description: Edit successfully
- *          400:
- *              description: Failed
+ *          404:
+ *              description: User not found
+ *          500:
+ *              description: Server error
  */
 router.put('/password', async (req,res,next)=>{
   try{
-    const emailClient=req.body.email;
-    const user=await MainModel.listUsers({'email':emailClient},{'task':'resetPassword'});
+    const user=await MainModel.listUsers({'email':req.body.email},{'task':'email'});
     if(!user){
-      return res.status(400).json({
+      return res.status(404).json({
         success:false,
-        message:"Error",
+        message:"User not found",
         data:[]
         });
     }
     const hashPassword=await bcrypt.hash(req.body.password,10);
-    const data= await MainModel.editUser({'email':emailClient,'password':hashPassword},{'task':'password'})
-    return res.status(201).json({
+    const data= await MainModel.editUser({'email':req.body.email,'password':hashPassword},{'task':'password'})
+    return res.status(200).json({
       success:true,
       message:'',
       data:[data]
       });
     }catch{
-    return res.status(400).json({
+    return res.status(500).json({
       success:false,
-      message:"Error",
+      message:"Server error",
       data:[]
       });
     }
 })
 
-//thay doi thong tin, can email, tao 1 class UserEditRequest
+//thay doi thong tin username,name, can email, tao 1 class UserEditRequest
 /**
  * @swagger
- * /edit/info/email/:email:
+ * /edit/info/:email:
  *  put: 
  *        summary: Edit user information if email exists
  *        description: Edit user information if email exists
  *        responses:
  *          201: 
  *              description: Edit successfully
- *          400:
- *              description: Failed
+ *          404:
+ *              description: Email not found
+ *          409: 
+ *              description: Username already exists
+ *          500:
+ *              description: Server error
+ *          
+ * 
+ * 
+ * 
  */
-router.put('/info/email/:email',async (req,res,next)=>{
-  const emailClient=await MainModel.listUsers({'email':req.params.email},{'task':'edit'})
+router.put('/info/:email',async (req,res,next)=>{
+  const emailClient=await MainModel.listUsers({'email':req.params.email},{'task':'email'});
+  const username=await MainModel.listUsers({'username':req.body.username},
+    {'task':'username'});
   if(!emailClient) {
-    return res.status(400).json({
+    return res.status(404).json({
       success:false,
-      message:"No email found",
+      message:"Email not found",
       data:[]
     })
+  }
+  if(username){
+    const userEmail = Array.isArray(username) ? username[0].email : username.email;
+    const userEmailClient=Array.isArray(username) ? emailClient[0].email : emailClient.email;
+    if(userEmail!=userEmailClient){
+      return res.status(409).json({
+        success:false,
+        message:"Username already exists",
+        data:[]
+      })
+    }
   }
   
   try{
     const body=req.body;
     const data=await MainModel.editUser({'email':req.params.email,'body':body},{'task':'edit'})
-      res.status(201).json({
+      res.status(200).json({
         success:true,
         message:"",
         data:[data]
     })
   }catch{
-    res.status(400).json({
+    res.status(500).json({
         success:false,
-        message:"Error",
+        message:"Server error",
         data:[]
       })
   } 
+})
+
+
+
+
+//edit email
+/**
+ * @swagger
+ * /edit/email/:email:
+ *  put: 
+ *        summary: Change email
+ *        description: Change email
+ *        responses:
+ *          200: 
+ *              description: Change email successfully
+ *          500:
+ *              description: Server error
+ */
+router.put('/email/:email',async (req,res,next)=>{
+  
+  const data=await MainModel.editUser({'email':req.params.email,'body':req.body},{'task':'edit'})
+  if(data){
+    return res.status(200).json({ 
+      success:true,
+      message:'', 
+      data:[] 
+    });
+  }
+  return res.status(500).json({ 
+    success:false,
+    message: 'Error', 
+    data:[]
+  });
+})
+
+ //Thay doi mat khau, can bie mat khau cu
+/**
+ * @swagger
+ * /edit/password/change:
+ *  put: 
+ *        summary: Edit password
+ *        description: Edit password
+ *        responses:
+ *          200: 
+ *              description: Edit successfully
+ *          404:
+ *              description: User not found
+ *          500:
+ *              description: Server error
+ */
+router.put('/password/change', async (req,res,next)=>{
+  const { oldPassword, newPassword,email } = req.body;
+  // kiem tra mat khau 
+  const data=await MainModel.listUsers({'email':email},{'task':'email'})
+  if(!data){
+    return res.status(404).json({
+      success:false,
+      message:"Email not found",
+      data:[]
+      });
+  } 
+  const isMatch = await bcrypt.compare(oldPassword, data.password);
+  if(!isMatch){
+    return res.status(400).json({
+      success:false,
+      message:"Wrong old password",
+      data:[]
+      });
+  } 
+  try{
+    const hashPassword=await bcrypt.hash(newPassword,10);
+    const data= await MainModel.editUser({'email':email,'password':hashPassword},{'task':'password'})
+    return res.status(200).json({
+      success:true,
+      message:'',
+      data:[data]
+      });
+    }catch{
+    return res.status(500).json({
+      success:false,
+      message:"Server error",
+      data:[]
+      });
+    }
 })
 module.exports = router;
