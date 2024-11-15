@@ -119,8 +119,7 @@ router.post('/image',async (req,res,next)=>{
     return res.status(200).json({
         success:true,
         message:'',
-        data:[{'email':email.email,
-            'image':imageBase64+" "}]
+        data:[{'image':imageBase64}]
     })
 
 
