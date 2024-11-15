@@ -104,5 +104,20 @@ router.post('/register/non', async (req,res,next)=>{
       message:"", 
       data:[] });
     })
+router.post('/image',async (req,res,next)=>{
+    const email=await MainModel.listUsers({'email':req.body.email},{'task':'email'});
+    if(!email){
+        return res.status(404).json({
+            success:false,
+            message:'Email not found',
+            data:[]
+        })
+    }
+    return res.status(200).json({
+        success:true,
+        message:'',
+        data:[email]
+    })
 
+})
 module.exports=router;

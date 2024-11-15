@@ -9,13 +9,13 @@ module.exports={
             return MainModel.find({}).select('id email username name password');
         }
         if(option.task=='username'){
-            return MainModel.findOne({username:param.username}).select('id email name username password');
+            return MainModel.findOne({username:param.username}).select('id email name username password image');
         }
         if(option.task=='email'){
-            return MainModel.findOne({email: param.email }).select('id email name username email password');
+            return MainModel.findOne({email: param.email }).select('id email name username email password image');
         }
         if(option.task=='usernameAndEmail'){
-            return MainModel.findOne({email: param.email,username:param}).select('id email name username email password');
+            return MainModel.findOne({email: param.email,username:param}).select('id email name username email password image');
         }
         
     },
@@ -35,6 +35,9 @@ module.exports={
         }
         if(option.task=='password'){
             return MainModel.updateOne({email:param.email},{ $set:{ password: param.password}});
+        }
+        if(option.task=='image'){
+            return MainModel.findOneAndUpdate({email:param.email}, {$set: { image: param.image }});
         }
         
     },

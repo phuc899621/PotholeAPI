@@ -1,10 +1,15 @@
 var express = require('express');
 var router = express.Router(); 
+const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const {mail_pasword,mail}=require('../config/system');
 const nodemailer = require('nodemailer');
 const MainModel=require(__path_models+'users');
+const User = require(__path_schemas+'users');
 
+//cau hinh luu tru hinh anh tam thoi
+const storage = multer.memoryStorage();  // Lưu trữ tạm thời trong bộ nhớ
+const upload = multer({ storage });
 //Cau hinh transporter de gui mail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -198,5 +203,26 @@ router.put('/password/change', async (req,res,next)=>{
       data:[]
       });
     }
+})
+router.put('/image',upload.single('image'),async(req,res,next)=>{
+  try {
+    // Lấy dữ liệu hình ảnh từ file đã tải lên
+    const {buffer } = req.file;
+
+    // Tiến hành lưu ảnh vào MongoDB
+    const image = await MainModel.editUser({'email':req.body.email,'image':buffer},{'task':'image'});
+    res.status(200).json({ 
+      success:true,
+      message: '',
+      data:[]});
+  } catch (error) {
+    res.status(500).json({ 
+      success:false,
+      message: 'Error uploading image',
+      data:[]});
+  }
+
+  
+
 })
 module.exports = router;
