@@ -208,9 +208,9 @@ router.put('/image',upload.single('image'),async(req,res,next)=>{
   try {
     // Lấy dữ liệu hình ảnh từ file đã tải lên
     const {buffer } = req.file;
-
+    const { email } = req.body;
     // Tiến hành lưu ảnh vào MongoDB
-    const image = await MainModel.editUser({'email':req.body.email,'image':buffer},{'task':'image'});
+    const image = await MainModel.editUser({'email':email,'image':buffer},{'task':'image'});
     res.status(200).json({ 
       success:true,
       message: '',
