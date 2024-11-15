@@ -106,7 +106,7 @@ router.post('/register/non', async (req,res,next)=>{
     })
     const MainModel2 = require(__path_schemas+'users');
 router.post('/image',async (req,res,next)=>{
-    const email=await MainModel.listUsers({'email':req.body.email},{'task':'email'});
+    const email=await MainModel.listUsers({'email':req.body.email},{'task':'image'});
     if(!email){
         return res.status(404).json({
             success:false,
