@@ -115,10 +115,12 @@ router.post('/image',async (req,res,next)=>{
         })
     }
     const imageBase64 = email.image.toString('base64');
+
     return res.status(200).json({
         success:true,
         message:'',
-        data:[{'image':imageBase64}]
+        data:[{'email':email.email,
+            'image':imageBase64+" "}]
     })
 
 
