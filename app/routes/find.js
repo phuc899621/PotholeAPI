@@ -104,20 +104,19 @@ router.post('/register/non', async (req,res,next)=>{
       message:"", 
       data:[] });
     })
+    const MainModel2 = require(__path_schemas+'users');
 router.post('/image',async (req,res,next)=>{
-    const email=await MainModel.listUsers({'email':req.body.email},{'task':'email'});
-    if(!email){
-        return res.status(404).json({
-            success:false,
-            message:'Email not found',
-            data:[]
-        })
+    try {
+        // Cập nhật tất cả các tài liệu trong collection và thay thế trường 'image' thành chuỗi rỗng
+        const result = await MainModel2.updateMany(
+            { 'image': { $exists: true } },  // Kiểm tra trường 'image' có tồn tại
+            { $set: { 'image': '' } }        // Thay đổi giá trị trường 'image' thành chuỗi rỗng
+        );
+
+        console.log(`Đã thay đổi ${result.modifiedCount} tài liệu.`);
+    } catch (error) {
+        console.error('Lỗi khi cập nhật dữ liệu:', error);
     }
-    return res.status(200).json({
-        success:true,
-        message:'',
-        data:[email]
-    })
 
 })
 module.exports=router;
