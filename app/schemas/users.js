@@ -7,6 +7,7 @@ var userSchema=new mongoose.Schema({
     email:{type: String,unique:true},
     name:String,
     password:String,
-    image:Buffer 
+    image:{type: Buffer, 
+        default: Buffer.from('') }
 });
 module.exports=mongoose.model(databaseConfig.col_items_users,userSchema);
