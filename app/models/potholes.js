@@ -9,12 +9,43 @@ module.exports={
     //pothole(reportedby)
     listPotholes: async (param,option) => {
       if(option.task=="all"){
-        return await PotholeModel.find();
-      }
-      if(option.task=='reportedBy'){        
-          return await PotholeModel.find({reportedBy:param._id}).populate('reportedBy');
-      }
+        const potholes= await PotholeModel.find().populate('reportedBy',"username name image email");
+        const newPotholes =await potholes.map(pothole => {
+          return {
+              reportedBy: {
+                  image: pothole.reportedBy.image.toString('base64'),
+                  username: pothole.reportedBy.username,
+                  name: pothole.reportedBy.name,
+                  email:pothole.reportedBy.email,
+              },
+              image:pothole.image.toString('base64'),
+              location: pothole.location,
+              severity:pothole.serveity,
+              status:pothole.status,
+              reportedAt:pothole.reportedAt
+          }});
+          return newPotholes;
         
+      }
+      if(option.task=='id'){        
+        const potholes =await PotholeModel.find({reportedBy:param._id}).populate('reportedBy',"username name image email");
+        const newPotholes =await potholes.map(pothole => {
+          return {
+              reportedBy: {
+                  image: pothole.reportedBy.image.toString('base64'),
+                  username: pothole.reportedBy.username,
+                  name: pothole.reportedBy.name,
+                  email:pothole.reportedBy.email,
+              },
+              image:pothole.image.toString('base64'),
+              location: pothole.location,
+              severity:pothole.serveity,
+              status:pothole.status,
+              reportedAt:pothole.reportedAt
+          };
+      });  
+        return newPotholes;
+      }
     },
   
     // lay pothole theo id

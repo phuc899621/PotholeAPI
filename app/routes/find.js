@@ -6,7 +6,6 @@ const nodemailer = require('nodemailer');
 const MainModel=require(__path_models+'users');
 const PotHoleModel=require(__path_models+'potholes');
 
-//CheckRequest class
 
 //kiem tra email, gui email tra ve data
 /**
@@ -63,7 +62,7 @@ router.post('/email/non',async (req,res,next)=>{
     return res.status(200).json({
         success:true,
         message:'',
-        data:[email]
+        data:[]
     })
 
 })
@@ -95,7 +94,7 @@ router.post('/register/non', async (req,res,next)=>{
     if(email){
         return res.status(409).json({
           success:false,
-          message:"Already have this email",
+          message:"Email already exists",
           data:[]
         });
     };
@@ -103,8 +102,8 @@ router.post('/register/non', async (req,res,next)=>{
       success:true,
       message:"", 
       data:[] });
-    })
-    const MainModel2 = require(__path_schemas+'users');
+})
+//lay image tu email
 router.post('/image',async (req,res,next)=>{
     const email=await MainModel.listUsers({'email':req.body.email},{'task':'image'});
     if(!email){

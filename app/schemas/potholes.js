@@ -10,6 +10,7 @@
   var potholeSchema=new mongoose.Schema({
       location: {
           type: { type: String, default: 'Point' }, 
+          //latitude,longtitude
           coordinates: { type: [Number], required: true }
         },
       reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },

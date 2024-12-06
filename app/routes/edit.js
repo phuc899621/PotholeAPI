@@ -149,7 +149,7 @@ router.put('/email/:email',async (req,res,next)=>{
   }
   return res.status(500).json({ 
     success:false,
-    message: 'Error', 
+    message: 'Server error', 
     data:[]
   });
 })
