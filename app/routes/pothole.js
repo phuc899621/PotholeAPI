@@ -116,6 +116,34 @@ router.post('/subinfo',async (req,res,next)=>{
         })
     }  
 })
+router.post('/find/month',async (req,res,next)=>{
+    const {month,year}=req.body;
+    if (!year || !month || month < 1 || month > 12) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid time",
+            data:[]
+        });
+    }
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 0);
+    try{
+        const data=await PotHoleModel.listPotholes({
+            'monthStart':monthStart,'monthEnd':monthEnd
+        },{'task':'year'});
+        return res.status(200).json({
+            success:true,
+            message:"",
+            data:[data]
+        })
+   }catch{
+        return res.status(500).json({
+            success:false,
+            message:"Error find pothole by month",
+            data:[]
+        })
+    }  
+})
 
 
 

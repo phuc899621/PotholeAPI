@@ -62,6 +62,11 @@ module.exports={
       if(option.task=='severity_all'){        
         return PotholeModel.countDocuments();
       }
+      if(option.task=="year"){
+        return PotholeModel.countDocuments({
+          reportedAt:{$gte:param.monthStart,$lt:param.monthEnd}
+        })
+      }
     },
   
     // lay pothole theo id
