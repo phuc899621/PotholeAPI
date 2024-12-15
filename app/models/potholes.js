@@ -67,6 +67,12 @@ module.exports={
           reportedAt:{$gte:param.monthStart,$lt:param.monthEnd}
         })
       }
+      if(option.task=="year_fixed"){
+        return PotholeModel.countDocuments({
+          reportedAt:{$gte:param.monthStart,$lt:param.monthEnd},
+          status: "fixed"
+        })
+      }
     },
   
     // lay pothole theo id

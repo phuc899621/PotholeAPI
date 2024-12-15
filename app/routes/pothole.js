@@ -131,10 +131,193 @@ router.post('/find/month',async (req,res,next)=>{
         const data=await PotHoleModel.listPotholes({
             'monthStart':monthStart,'monthEnd':monthEnd
         },{'task':'year'});
+        const data_fixed=await PotHoleModel.listPotholes({
+            'monthStart':monthStart,'monthEnd':monthEnd
+        },{'task':'year_not_fixed'});
         return res.status(200).json({
             success:true,
             message:"",
-            data:[data]
+            data:[{
+                pothole:data || 0,
+                fixed_pothole:data_fixed||0
+            }]
+        })
+   }catch{
+        return res.status(500).json({
+            success:false,
+            message:"Error find pothole by month",
+            data:[]
+        })
+    }  
+})
+
+
+router.post('/find/year',async (req,res,next)=>{
+    const {year}=req.body;
+    const monthStartJan = new Date(year, 0, 1);
+    const monthEndJan = new Date(year, 1, 0);
+    const monthStartFeb = new Date(year, 1, 1);
+    const monthEndFeb = new Date(year, 2, 0);
+    const monthStartMar = new Date(year,2, 1);
+    const monthEndMar = new Date(year, 3, 0);
+    const monthStartApr = new Date(year, 3, 1);
+    const monthEndApr = new Date(year, 4, 0);
+    const monthStartMay = new Date(year,4, 1);
+    const monthEndMay = new Date(year, 5, 0);
+    const monthStartJun = new Date(year,5, 1);
+    const monthEndJun = new Date(year, 6, 0);
+    const monthStartJul = new Date(year,6, 1);
+    const monthEndJul = new Date(year, 7, 0);
+    const monthStartAug = new Date(year,7, 1);
+    const monthEndAug = new Date(year, 8, 0);
+    const monthStartSep = new Date(year,8, 1);
+    const monthEndSep = new Date(year, 9, 0);
+    const monthStartOct = new Date(year,9, 1);
+    const monthEndOct = new Date(year, 10, 0);
+    const monthStartNov = new Date(year,10, 1);
+    const monthEndNov = new Date(year, 11, 0);
+    const monthStartDec = new Date(year,11, 1);
+    const monthEndDec = new Date(year, 12, 0);
+    try{
+        //1
+        const data_jan=await PotHoleModel.listPotholes({
+            'monthStart':monthStartJan,'monthEnd':monthEndJan
+        },{'task':'year'});
+        const data_fixedJan=await PotHoleModel.listPotholes({
+            'monthStart':monthStartJan,'monthEnd':monthEndJan
+        },{'task':'year_fixed'});
+        //2
+        const data_feb=await PotHoleModel.listPotholes({
+            'monthStart':monthStartFeb,'monthEnd':monthEndFeb
+        },{'task':'year'});
+        const data_fixedFeb=await PotHoleModel.listPotholes({
+            'monthStart':monthStartFeb,'monthEnd':monthEndFeb
+        },{'task':'year_fixed'});
+        //3
+        const data_mar=await PotHoleModel.listPotholes({
+            'monthStart':monthStartMar,'monthEnd':monthEndMar
+        },{'task':'year'});
+        const data_fixedMar=await PotHoleModel.listPotholes({
+            'monthStart':monthStartMar,'monthEnd':monthEndMar
+        },{'task':'year_fixed'});
+        //4
+        const data_apr=await PotHoleModel.listPotholes({
+            'monthStart':monthStartApr,'monthEnd':monthEndApr
+        },{'task':'year'});
+        const data_fixedApr=await PotHoleModel.listPotholes({
+            'monthStart':monthStartApr,'monthEnd':monthEndApr
+        },{'task':'year_fixed'});
+        //5
+        const data_may=await PotHoleModel.listPotholes({
+            'monthStart':monthStartMay,'monthEnd':monthEndMay
+        },{'task':'year'});
+        const data_fixedMay=await PotHoleModel.listPotholes({
+            'monthStart':monthStartMay,'monthEnd':monthEndMay
+        },{'task':'year_fixed'});
+        //6
+        const data_jun=await PotHoleModel.listPotholes({
+            'monthStart':monthStartJun,'monthEnd':monthEndJun
+        },{'task':'year'});
+        const data_fixedJun=await PotHoleModel.listPotholes({
+            'monthStart':monthStartJun,'monthEnd':monthEndJun
+        },{'task':'year_fixed'});
+        //7
+        const data_jul=await PotHoleModel.listPotholes({
+            'monthStart':monthStartJul,'monthEnd':monthEndJul
+        },{'task':'year'});
+        const data_fixedJul=await PotHoleModel.listPotholes({
+            'monthStart':monthStartJul,'monthEnd':monthEndJul
+        },{'task':'year_fixed'});
+        //8
+        const data_aug=await PotHoleModel.listPotholes({
+            'monthStart':monthStartAug,'monthEnd':monthEndAug
+        },{'task':'year'});
+        const data_fixedAug=await PotHoleModel.listPotholes({
+            'monthStart':monthStartAug,'monthEnd':monthEndAug
+        },{'task':'year_fixed'});
+        //9
+        const data_sep=await PotHoleModel.listPotholes({
+            'monthStart':monthStartSep,'monthEnd':monthEndSep
+        },{'task':'year'});
+        const data_fixedSep=await PotHoleModel.listPotholes({
+            'monthStart':monthStartSep,'monthEnd':monthEndSep
+        },{'task':'year_fixed'});
+        //10
+        const data_oct=await PotHoleModel.listPotholes({
+            'monthStart':monthStartOct,'monthEnd':monthEndOct
+        },{'task':'year'});
+        const data_fixedOct=await PotHoleModel.listPotholes({
+            'monthStart':monthStartOct,'monthEnd':monthEndOct
+        },{'task':'year_fixed'});
+        //11
+        const data_nov=await PotHoleModel.listPotholes({
+            'monthStart':monthStartNov,'monthEnd':monthEndNov
+        },{'task':'year'});
+        const data_fixedNov=await PotHoleModel.listPotholes({
+            'monthStart':monthStartNov,'monthEnd':monthEndNov
+        },{'task':'year_fixed'});
+        //12
+        const data_dec=await PotHoleModel.listPotholes({
+            'monthStart':monthStartDec,'monthEnd':monthEndDec
+        },{'task':'year'});
+        const data_fixedDec=await PotHoleModel.listPotholes({
+            'monthStart':monthStartDec,'monthEnd':monthEndDec
+        },{'task':'year_fixed'});
+
+        return res.status(200).json({
+            success:true,
+            message:"",
+            data:[{
+                jan:{
+                    pothole:data_jan || 0,
+                    fixed_pothole:data_fixedJan||0
+                },
+                feb:{
+                    pothole:data_feb || 0,
+                    fixed_pothole:data_fixedFeb||0
+                },
+                mar:{
+                    pothole:data_mar || 0,
+                    fixed_pothole:data_fixedMar||0
+                },
+                apr:{
+                    pothole:data_apr || 0,
+                    fixed_pothole:data_fixedApr||0
+                },
+                may:{
+                    pothole:data_may || 0,
+                    fixed_pothole:data_fixedMay||0
+                },
+                jun:{
+                    pothole:data_jun || 0,
+                    fixed_pothole:data_fixedJun||0
+                },
+                jul:{
+                    pothole:data_jul || 0,
+                    fixed_pothole:data_fixedJul||0
+                },
+                aug:{
+                    pothole:data_aug || 0,
+                    fixed_pothole:data_fixedAug||0
+                },
+                sep:{
+                    pothole:data_sep || 0,
+                    fixed_pothole:data_fixedSep||0
+                },
+                oct:{
+                    pothole:data_oct || 0,
+                    fixed_pothole:data_fixedOct||0
+                },
+                nov:{
+                    pothole:data_nov || 0,
+                    fixed_pothole:data_fixedNov||0
+                },
+                dec:{
+                    pothole:data_dec || 0,
+                    fixed_pothole:data_fixedDec||0
+                }
+                
+            }]
         })
    }catch{
         return res.status(500).json({
