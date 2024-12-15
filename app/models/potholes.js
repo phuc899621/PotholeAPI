@@ -1,4 +1,5 @@
 const PotholeModel = require(__path_schemas+'potholes');
+const Subinfo = require(__path_models+'subinfo')
 module.exports={
     //them 1 pothole
     addPothole: async (data) => {
@@ -20,7 +21,7 @@ module.exports={
               },
               image:pothole.image.toString('base64'),
               location: pothole.location,
-              severity:pothole.serveity,
+              severity:pothole.severity,
               status:pothole.status,
               reportedAt:pothole.reportedAt
           }});
@@ -39,12 +40,15 @@ module.exports={
               },
               image:pothole.image.toString('base64'),
               location: pothole.location,
-              severity:pothole.serveity,
+              severity:pothole.severity,
               status:pothole.status,
               reportedAt:pothole.reportedAt
           };
       });  
         return newPotholes;
+      }
+      if(option.task=='count'){        
+          return PotholeModel.countDocuments({reportedBy:param._id});
       }
     },
   

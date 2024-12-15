@@ -3,7 +3,8 @@ var router = express.Router();
 const bcrypt = require('bcryptjs');
 const MainModel=require(__path_models+'users');
 const PotHoleModel=require(__path_models+'potholes');
-
+const SubinfoModel=require(__path_models+'subinfo');
+const SubInfo=require(__path_schemas+'subinfo');
 /**
  * @swagger
  * /auth/:
@@ -131,12 +132,40 @@ router.post('/register', async (req,res,next)=>{
       data:[]
       });
   }
+  await SubinfoModel.create({userID:data._id});
   return res.status(201).json({
     success:true,
     message:'',
     data:[]
     });
 })
+
+router.post('/null', async (req,res,next)=>{
+  try {
+    // Lấy tất cả người dùng
+    const users = await MainModel.listUsers({},{'task':'all'});  // Truy vấn tất cả người dùng
+
+    // Lặp qua tất cả người dùng và tạo subinfo
+    const subinfoPromises = users.map(user => {
+      return SubInfo.create({
+          userID: user._id,  // Liên kết subinfo với userID của người dùng
+          totalDistances: 0,  // Mặc định là 0
+          totalReport: 0,  // Mặc định là 0
+          totalFixedPothole: 0  // Mặc định là 0
+      });
+  });
+
+    // Chờ tất cả các subinfo được tạo
+    const subInfos = await Promise.all(subinfoPromises);
+
+    console.log(`Đã thêm subinfo cho ${subInfos.length} người dùng`);
+    return subInfos;  // Trả về tất cả subinfo đã được tạo
+} catch (error) {
+    console.error('Lỗi khi thêm subinfo cho người dùng:', error);
+    throw error;
+}
+})
+
 
 
 /**

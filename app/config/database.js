@@ -4,5 +4,6 @@ module.exports={
     database:"api_authentication",
     col_items_users:"users",
     col_items_potholes:'potholes',
+    col_items_subinfo:'subinfo',
 
 }
