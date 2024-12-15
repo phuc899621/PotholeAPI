@@ -19,6 +19,10 @@ module.exports={
                 $set: { totalReport: param.totalReport }
             })
         }
-        
+    },
+    listSubinfo:(param,option)=>{
+        if(option.task=='one'){
+            return SubinfoModel.findOne({userID:param.userID});
+        }
     }
 }

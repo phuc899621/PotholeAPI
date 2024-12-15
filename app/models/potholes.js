@@ -44,11 +44,23 @@ module.exports={
               status:pothole.status,
               reportedAt:pothole.reportedAt
           };
-      });  
-        return newPotholes;
+        });  
+          return newPotholes;
       }
       if(option.task=='count'){        
           return PotholeModel.countDocuments({reportedBy:param._id});
+      }
+      if(option.task=='severity_small'){        
+        return PotholeModel.countDocuments({severity:'small'});
+      }
+      if(option.task=='severity_medium'){        
+        return PotholeModel.countDocuments({severity:'meidum'});
+      }
+      if(option.task=='severity_large'){        
+        return PotholeModel.countDocuments({severity:'large'});
+      }
+      if(option.task=='severity_all'){        
+        return PotholeModel.countDocuments();
       }
     },
   

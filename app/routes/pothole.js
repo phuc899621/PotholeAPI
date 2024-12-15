@@ -71,12 +71,38 @@ router.post('/find/email',async (req,res,next)=>{
     }  
 })
 
-//
-router.post('/find/severity',async (req,res,next)=>{
+//tim so luong pothole dua tren muc do
+router.get('/find/severity',async (req,res,next)=>{
+    try{
+        const totalPothole=await PotHoleModel.listPotholes({},{'task':'severity_all'});
+        const smallPothole=await PotHoleModel.listPotholes({},{'task':'severity_small'});
+        const mediumPothole=await PotHoleModel.listPotholes({},{'task':'severity_medium'});
+        const largePothole=await PotHoleModel.listPotholes({},{'task':'severity_large'});
+        return res.status(200).json({
+            success:true,
+            message:"",
+            data:[{
+                total:totalPothole,
+                small:smallPothole,
+                medium:mediumPothole,
+                large:largePothole
+            }]
+        })
+   }catch{
+        return res.status(500).json({
+            success:false,
+            message:"Error find severity",
+            data:[]
+        })
+    }  
+})
+
+//lay du lieu subinfo, can gui 
+router.post('/subinfo',async (req,res,next)=>{
     const {email}=req.body;
     try{
         const _id=await MainModel.listUsers({'email':email},{'task':'email'});
-        const data=await PotHoleModel.listPotholes({'_id':_id},{'task':'id'});
+        const data=await SubInfo.listSubinfo({'userID':_id._id},{'task':'one'});
         return res.status(200).json({
             success:true,
             message:"",
@@ -85,11 +111,13 @@ router.post('/find/severity',async (req,res,next)=>{
    }catch{
         return res.status(500).json({
             success:false,
-            message:"Error find pothole",
+            message:"Error find info",
             data:[]
         })
     }  
 })
+
+
 
 
 
