@@ -54,7 +54,7 @@ module.exports={
         return PotholeModel.countDocuments({severity:'small'});
       }
       if(option.task=='severity_medium'){        
-        return PotholeModel.countDocuments({severity:'meidum'});
+        return PotholeModel.countDocuments({severity:'medium'});
       }
       if(option.task=='severity_large'){        
         return PotholeModel.countDocuments({severity:'large'});
