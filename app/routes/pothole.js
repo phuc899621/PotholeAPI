@@ -122,7 +122,7 @@ router.post('/save/distance',async (req,res,next)=>{
     const {email,totalDistances}=req.body;
     try{
         const _id=await MainModel.listUsers({'email':email},{'task':'email'});
-        await SubInfo.update({'_id':_id._id},{'task':'distance'})
+        await SubInfo.update({'_id':_id._id,'totalDistances':totalDistances},{'task':'distance'})
         return res.status(200).json({
             success:true,
             message:"",
