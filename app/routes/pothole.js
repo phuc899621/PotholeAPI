@@ -116,6 +116,26 @@ router.post('/subinfo',async (req,res,next)=>{
         })
     }  
 })
+
+//luu khoang cach len server, can truyen len email
+router.post('/save/distance',async (req,res,next)=>{
+    const {email,totalDistances}=req.body;
+    try{
+        const _id=await MainModel.listUsers({'email':email},{'task':'email'});
+        await SubInfo.update({'_id':_id._id},{'task':totalDistances})
+        return res.status(200).json({
+            success:true,
+            message:"",
+            data:[]
+        })
+   }catch{
+        return res.status(500).json({
+            success:false,
+            message:"Error saving distance",
+            data:[]
+        })
+    }  
+})
 router.post('/find/month',async (req,res,next)=>{
     const {month,year}=req.body;
     if (!year || !month || month < 1 || month > 12) {

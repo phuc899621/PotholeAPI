@@ -19,6 +19,13 @@ module.exports={
                 $set: { totalReport: param.totalReport }
             })
         }
+        if(option.task=='distance'){
+            return await SubinfoModel.updateOne({
+                userID:param._id
+            },{
+                $set: { totalDistances: param.totalDistances}
+            })
+        }
     },
     listSubinfo:(param,option)=>{
         if(option.task=='one'){
