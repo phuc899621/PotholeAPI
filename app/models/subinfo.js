@@ -23,7 +23,7 @@ module.exports={
             return await SubinfoModel.updateOne({
                 userID:param._id
             },{
-                $set: { totalDistances: param.totalDistances}
+                $inc: { totalDistances: param.totalDistances}
             })
         }
     },
