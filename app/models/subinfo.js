@@ -23,13 +23,29 @@ module.exports={
             return await SubinfoModel.updateOne({
                 userID:param._id
             },{
-                $inc: { totalDistances: param.totalDistances}
+                $set: { totalDistances: param.totalDistances}
             })
         }
     },
-    listSubinfo:(param,option)=>{
+    listSubinfo:async(param,option)=>{
         if(option.task=='one'){
             return SubinfoModel.findOne({userID:param.userID});
         }
+        if(option.task=='ranking'){
+            const subinfos= await SubinfoModel.find({})
+            .populate('userID',"username")
+            .sort({totalReport: -1})
+            .limit(10);
+            const newSubinfo =await subinfos.map(subinfo => {
+                return {
+                    username:subinfo.userID.username,
+                    totalReport:subinfo.totalReport
+                }
+              });  
+            return newSubinfo;
+        }
+
+    
+
     }
 }

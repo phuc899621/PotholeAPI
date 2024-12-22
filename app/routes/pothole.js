@@ -347,7 +347,22 @@ router.post('/find/year',async (req,res,next)=>{
         })
     }  
 })
-
+router.get('/ranking',async (req,res,next)=>{
+    try{
+        const data = await SubInfo.listSubinfo({},{'task':'ranking'});
+        return res.status(200).json({
+            success:true,
+            message:"",
+            data:[data]
+        })
+   }catch{
+        return res.status(500).json({
+            success:false,
+            message:"Error find subinfo",
+            data:[]
+        })
+    }  
+})
 
 
 
