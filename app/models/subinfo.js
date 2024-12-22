@@ -33,11 +33,12 @@ module.exports={
         }
         if(option.task=='ranking'){
             const subinfos= await SubinfoModel.find({})
-            .populate('userID',"username")
+            .populate('userID',"name username")
             .sort({totalReport: -1})
             .limit(10);
             const newSubinfo =await subinfos.map(subinfo => {
                 return {
+                    name:subinfo.userID.name,
                     username:subinfo.userID.username,
                     totalReport:subinfo.totalReport
                 }

@@ -353,7 +353,7 @@ router.get('/ranking',async (req,res,next)=>{
         return res.status(200).json({
             success:true,
             message:"",
-            data:[data]
+            data:Array.isArray(data)? data: [data]
         })
    }catch{
         return res.status(500).json({
