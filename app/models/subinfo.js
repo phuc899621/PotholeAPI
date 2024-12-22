@@ -34,8 +34,8 @@ module.exports={
         if(option.task=='ranking'){
             const subinfos= await SubinfoModel.find({})
             .populate('userID',"name username")
-            .sort({totalReport: -1})
-            .limit(10);
+            .sort({totalReport: -1});
+            //.limit(10);
             const newSubinfo =await subinfos.map(subinfo => {
                 return {
                     name:subinfo.userID.name,
