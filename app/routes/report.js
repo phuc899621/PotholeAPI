@@ -14,7 +14,7 @@ router.post('/add',upload.single('image'),async(req,res,next)=>{
     try {
       // Lấy dữ liệu hình ảnh từ file đã tải lên
       const {buffer } = req.file;
-      const { email,description } = req.body;
+      const { email,description,location,severity } = JSON.parse(req.body.request);
       // Tiến hành lưu ảnh vào MongoDB
       const _id=await MainModel.listUsers({'email':email},{'task':'email'});
       let param0=[];
