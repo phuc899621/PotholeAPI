@@ -78,5 +78,10 @@ module.exports={
     // lay pothole theo id
     getPotholeById: async (id) => {
       return await PotholeModel.findById(id).populate('reportedBy', 'username');
+    },
+    editPothole: async (param,option)=>{
+      if(option.task=="image")
+        return await PotholeModel.findOneAndUpdate({_id:param._id,}, {$set: { image: param.image }});
+
     }
 }

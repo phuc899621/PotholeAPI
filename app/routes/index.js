@@ -7,4 +7,5 @@ router.use('/edit',require('./edit'));
 router.use('/pothole',require('./pothole'));
 router.use('/find',require('./find'));
 router.use('/code',require('./code'));
+router.use('/report',require('./report'));
 module.exports = router; 
